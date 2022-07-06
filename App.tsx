@@ -19,7 +19,7 @@ import HelloWorld from '@/Views/HelloWorld'
 
 const Stack = createNativeStackNavigator()
 
-const App = () => {
+const App: React.FC<{}> = () => {
     const isDarkMode = useColorScheme() === 'dark'
 
     const backgroundStyle = {
@@ -38,9 +38,10 @@ const App = () => {
                     headerTintColor: '#fff',
                     headerTitleStyle: {
                         fontWeight: 'bold'
-                    }
+                    },
+                    headerBackTitle: ''
                 }}>
-                <Stack.Screen name="Tab" component={TabBarView} />
+                <Stack.Screen name="Tab" component={TabBarView} options={{ headerShown: false }} />
                 <Stack.Screen name="HelloWorld" component={HelloWorld} />
             </Stack.Navigator>
         </NavigationContainer>
