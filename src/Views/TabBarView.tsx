@@ -1,4 +1,5 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import AntDesign from 'react-native-vector-icons/AntDesign'
 import React from 'react'
 import HomeView from '@/Views/HomeView'
 import ProfileView from '@/Views/ProfileView'
@@ -18,8 +19,16 @@ const TabBarView: React.FC<{}> = () => {
                     fontWeight: 'bold'
                 }
             }}>
-            <Tab.Screen name="Home" component={HomeView} options={{ title: '首页' }} />
-            <Tab.Screen name="Profile" component={ProfileView} options={{ title: '我的' }} />
+            <Tab.Screen
+                name="Home"
+                component={HomeView}
+                options={{ title: '首页', tabBarLabel: '首页', tabBarIcon: ({ color, size }) => <AntDesign name="home" color={color} size={size} /> }}
+            />
+            <Tab.Screen
+                name="Profile"
+                component={ProfileView}
+                options={{ title: '我的', tabBarLabel: '我的', tabBarIcon: ({ color, size }) => <AntDesign name="user" color={color} size={size} /> }}
+            />
         </Tab.Navigator>
     )
 }

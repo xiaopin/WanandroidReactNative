@@ -5,6 +5,7 @@ import Carousel from 'react-native-snap-carousel'
 import Api from '@/api'
 import ArticleCell from '@/components/ArticleCell'
 import AppTheme from '@/utils/theme'
+import { HttpResponse } from '@/api/http'
 
 const window = Dimensions.get('window')
 const screen = Dimensions.get('screen')
@@ -81,13 +82,20 @@ const HomeView: React.FC<
                 .catch((e: Error) => {})
         }
         setLoading(true)
-        Api.homeArticles(pageIndex)
+        new Promise<void>((resolve, reject) => {
+            if (pageIndex != 0) return resolve()
+            Api.homeTopArticles()
+                .then(res => {
+                    const items = res.data || []
+                    setArticles(items)
+                    resolve()
+                })
+                .catch(e => reject(e))
+        })
+            .then(() => Api.homeArticles(pageIndex))
             .then(res => {
                 const items = res.data.datas || []
-                setArticles(oldItems => {
-                    if (pageIndex == 0) return items
-                    return oldItems.concat(items)
-                })
+                setArticles(oldItems => oldItems.concat(items))
             })
             .catch((e: Error) => {})
             .finally(() => setLoading(false))
