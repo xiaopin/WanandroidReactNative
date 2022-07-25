@@ -1,9 +1,10 @@
 import React, { PropsWithChildren, useEffect, useLayoutEffect, useState } from 'react'
-import { Button, Text, View, Image, Dimensions, ScaledSize, TouchableOpacity, ScrollView, RefreshControl } from 'react-native'
+import { Button, Text, View, Image, Dimensions, ScaledSize, TouchableOpacity, ScrollView, RefreshControl, FlatList, SectionList } from 'react-native'
 import { NavigationProp, ParamListBase, RouteProp } from '@react-navigation/native'
 import Carousel from 'react-native-snap-carousel'
 import Api from '@/api'
 import ArticleCell from '@/components/ArticleCell'
+import AppTheme from '@/utils/theme'
 
 const window = Dimensions.get('window')
 const screen = Dimensions.get('screen')
@@ -39,6 +40,7 @@ const HomeView: React.FC<
     const [articles, setArticles] = useState<ApiResp.ArticleModel[]>([])
     /** 当前页码 */
     const [pageIndex, setPageIndex] = useState(0)
+    const [isLoading, setLoading] = useState(false)
     const [dimensions, setDimensions] = useState({ window, screen })
     /** 轮播图组件 */
     let carouselRef: Carousel<ApiResp.HomeBannerModel> | null
@@ -50,46 +52,96 @@ const HomeView: React.FC<
         return () => subscription.remove()
     })
 
-    useEffect(() => requestData(), [])
+    useEffect(() => requestData(pageIndex), [])
+
+    /** 下拉刷新 */
+    const onHandleHeaderRefresh = (): void => {
+        const page = 0
+        setPageIndex(page)
+        requestData(page)
+    }
+
+    /** 上拉加载更多 */
+    const onHandleFooterRefresh = (info: { distanceFromEnd: number }): void => {
+        if (isLoading) return
+        setPageIndex(value => {
+            const ret = value + 1
+            requestData(ret)
+            return ret
+        })
+    }
 
     /** 请求数据 */
-    const requestData = (): void => {
-        Api.banner()
-            .then(res => {
-                setBanners(res.data || [])
-            })
-            .catch((e: Error) => {})
+    const requestData = (pageIndex: number): void => {
+        if (pageIndex == 0) {
+            Api.banner()
+                .then(res => {
+                    setBanners(res.data || [])
+                })
+                .catch((e: Error) => {})
+        }
+        setLoading(true)
         Api.homeArticles(pageIndex)
             .then(res => {
-                setArticles(res.data.datas || [])
+                const items = res.data.datas || []
+                setArticles(oldItems => {
+                    if (pageIndex == 0) return items
+                    return oldItems.concat(items)
+                })
             })
             .catch((e: Error) => {})
+            .finally(() => setLoading(false))
     }
 
     /** 轮播点击事件 */
     const onHandleCarouselClick = (item: ApiResp.HomeBannerModel, index: number): void => {}
 
     return (
-        <ScrollView style={{ flex: 1 }}>
-            <Carousel
-                ref={carousel => (carouselRef = carousel)}
-                data={banners}
-                renderItem={item =>
-                    CarouselRenderItem({
-                        ...item,
-                        width: dimensions.screen.width,
-                        height: (dimensions.screen.width * 9) / 16,
-                        click: onHandleCarouselClick
-                    })
-                }
-                sliderWidth={dimensions.screen.width}
-                itemWidth={dimensions.screen.width}
-            />
-            {articles.map(item => (
-                <ArticleCell item={item} key={item.id} />
-            ))}
-            <Button title="Hello World" onPress={() => navigation.navigate('HelloWorld')} />
-        </ScrollView>
+        <FlatList
+            style={{ flex: 1 }}
+            data={articles}
+            renderItem={data => <ArticleCell item={data.item} />}
+            keyExtractor={(item, index) => String(item.id)}
+            ListHeaderComponent={
+                banners.length > 0 ? (
+                    <Carousel
+                        ref={carousel => (carouselRef = carousel)}
+                        data={banners}
+                        renderItem={item =>
+                            CarouselRenderItem({
+                                ...item,
+                                width: dimensions.screen.width,
+                                height: (dimensions.screen.width * 9) / 16,
+                                click: onHandleCarouselClick
+                            })
+                        }
+                        sliderWidth={dimensions.screen.width}
+                        itemWidth={dimensions.screen.width}
+                    />
+                ) : null
+            }
+            ListFooterComponent={
+                pageIndex > 0 && isLoading ? (
+                    <Text style={{ width: '100%', paddingVertical: 16, textAlign: 'center', color: '#999999', fontSize: 12 }}>正在拼命加载中...</Text>
+                ) : null
+            }
+            refreshControl={
+                <RefreshControl
+                    enabled={true}
+                    refreshing={pageIndex == 0 && isLoading}
+                    onRefresh={onHandleHeaderRefresh}
+                    colors={[AppTheme.colors.primary]}
+                    tintColor={AppTheme.colors.primary}
+                />
+            }
+            // refreshControl 和 onRefresh 指定一个即可
+            // 如果需要自定义刷新控件的样式则使用 refreshControl, 使用默认样式则采用 onRefresh
+            // onRefresh={onHandleHeaderRefresh}
+            refreshing={isLoading}
+            onEndReached={onHandleFooterRefresh}
+            onEndReachedThreshold={0.2}
+            keyboardDismissMode="on-drag"
+        />
     )
 }
 
