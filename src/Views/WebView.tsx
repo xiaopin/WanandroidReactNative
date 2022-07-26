@@ -17,7 +17,7 @@ const WebView: React.FC<
 > = props => {
     const { navigation, route } = props
     const { uri, title } = props.route.params
-    let webViewRef: NativeWebView | null = null
+    const webViewRef = React.createRef<NativeWebView>()
     let canGoBack = false
 
     useLayoutEffect(() => {
@@ -26,10 +26,10 @@ const WebView: React.FC<
             headerTitle: title || '',
             headerLeft: () => (
                 <View style={{ flexDirection: 'row' }}>
-                    <TouchableOpacity onPress={() => (canGoBack && webViewRef ? webViewRef.goBack() : navigation.goBack())}>
+                    <TouchableOpacity onPress={() => (canGoBack && webViewRef.current ? webViewRef.current.goBack() : navigation.goBack())}>
                         <Ionicons name="chevron-back" color="white" size={24} />
                     </TouchableOpacity>
-                    <TouchableOpacity style={{ marginLeft: 12 }} onPress={() => navigation.goBack()}>
+                    <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => navigation.goBack()}>
                         <Ionicons name="close" color="white" size={24} />
                     </TouchableOpacity>
                 </View>
@@ -48,7 +48,7 @@ const WebView: React.FC<
 
     return (
         <View style={{ flex: 1 }}>
-            <NativeWebView ref={v => (webViewRef = v)} style={{ flex: 1 }} source={{ uri: uri }} onNavigationStateChange={onHandleNavigationStateChange} />
+            <NativeWebView ref={webViewRef} style={{ flex: 1 }} source={{ uri: uri }} onNavigationStateChange={onHandleNavigationStateChange} />
         </View>
     )
 }

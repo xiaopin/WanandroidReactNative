@@ -27,7 +27,7 @@ const TabBarView: React.FC<{}> = () => {
             <Tab.Screen
                 name="Profile"
                 component={ProfileView}
-                options={{ title: '我的', tabBarLabel: '我的', tabBarIcon: ({ color, size }) => <AntDesign name="user" color={color} size={size} /> }}
+                options={{ headerShown: false, tabBarLabel: '我的', tabBarIcon: ({ color, size }) => <AntDesign name="user" color={color} size={size} /> }}
             />
         </Tab.Navigator>
     )
