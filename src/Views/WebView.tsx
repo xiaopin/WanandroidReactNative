@@ -26,11 +26,11 @@ const WebView: React.FC<
             headerTitle: title || '',
             headerLeft: () => (
                 <View style={{ flexDirection: 'row' }}>
-                    <TouchableOpacity style={{ marginRight: 8 }} onPress={() => navigation.goBack()}>
-                        <Ionicons name="close" color="white" />
-                    </TouchableOpacity>
                     <TouchableOpacity onPress={() => (canGoBack && webViewRef ? webViewRef.goBack() : navigation.goBack())}>
-                        <Ionicons name="chevron-back" color="white" />
+                        <Ionicons name="chevron-back" color="white" size={24} />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{ marginLeft: 12 }} onPress={() => navigation.goBack()}>
+                        <Ionicons name="close" color="white" size={24} />
                     </TouchableOpacity>
                 </View>
             )
