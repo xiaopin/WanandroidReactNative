@@ -1,7 +1,7 @@
 import { NavigationProp, ParamListBase, Route, RouteProp } from '@react-navigation/native'
 import React, { PropsWithChildren, useLayoutEffect, useState } from 'react'
 import { Button, TouchableOpacity, View } from 'react-native'
-import { WebView as NativeWebView } from 'react-native-webview'
+import { WebView as NativeWebView, WebViewNavigation } from 'react-native-webview'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 
 export type WebViewRouteParams = {
@@ -37,9 +37,18 @@ const WebView: React.FC<
         })
     }, [navigation, route])
 
+    const onHandleNavigationStateChange = (event: WebViewNavigation): void => {
+        canGoBack = event.canGoBack
+        if (!event.loading) {
+            navigation.setOptions({
+                headerTitle: event.title || title || ''
+            })
+        }
+    }
+
     return (
         <View style={{ flex: 1 }}>
-            <NativeWebView ref={v => (webViewRef = v)} style={{ flex: 1 }} source={{ uri: uri }} onNavigationStateChange={nav => (canGoBack = nav.canGoBack)} />
+            <NativeWebView ref={v => (webViewRef = v)} style={{ flex: 1 }} source={{ uri: uri }} onNavigationStateChange={onHandleNavigationStateChange} />
         </View>
     )
 }
