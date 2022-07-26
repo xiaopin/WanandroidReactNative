@@ -102,7 +102,9 @@ const HomeView: React.FC<
     }
 
     /** 轮播点击事件 */
-    const onHandleCarouselClick = (item: ApiResp.HomeBannerModel, index: number): void => {}
+    const onHandleCarouselClick = (item: ApiResp.HomeBannerModel, index: number): void => {
+        navigation.navigate('H5', { uri: item.url, title: item.title })
+    }
 
     return (
         <FlatList

@@ -16,6 +16,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import AppTheme from '@/utils/theme'
 import TabBarView from '@/Views/TabBarView'
 import HelloWorld from '@/Views/HelloWorld'
+import WebView from '@/Views/WebView'
 
 const Stack = createNativeStackNavigator()
 
@@ -43,6 +44,7 @@ const App: React.FC<{}> = () => {
                 }}>
                 <Stack.Screen name="Tab" component={TabBarView} options={{ headerShown: false }} />
                 <Stack.Screen name="HelloWorld" component={HelloWorld} />
+                <Stack.Screen name="H5" component={WebView} />
             </Stack.Navigator>
         </NavigationContainer>
     )
