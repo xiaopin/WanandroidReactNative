@@ -17,6 +17,7 @@ import AppTheme from '@/utils/theme'
 import TabBarView from '@/Views/TabBarView'
 import HelloWorld from '@/Views/HelloWorld'
 import WebView from '@/Views/WebView'
+import UpgradeView from '@/Views/UpgradeView'
 
 const Stack = createNativeStackNavigator()
 
@@ -42,9 +43,15 @@ const App: React.FC<{}> = () => {
                     },
                     headerBackTitle: ''
                 }}>
-                <Stack.Screen name="Tab" component={TabBarView} options={{ headerShown: false }} />
-                <Stack.Screen name="HelloWorld" component={HelloWorld} />
-                <Stack.Screen name="H5" component={WebView} />
+                <Stack.Group screenOptions={{ presentation: 'card' }}>
+                    <Stack.Screen name="Tab" component={TabBarView} options={{ headerShown: false }} />
+                    <Stack.Screen name="HelloWorld" component={HelloWorld} />
+                    <Stack.Screen name="H5" component={WebView} />
+                </Stack.Group>
+                {/* <Stack.Group screenOptions={{ presentation: 'modal' }}></Stack.Group> */}
+                <Stack.Group screenOptions={{ presentation: 'transparentModal' }}>
+                    <Stack.Screen name="Upgrade" component={UpgradeView} options={{ headerShown: false }} />
+                </Stack.Group>
             </Stack.Navigator>
         </NavigationContainer>
     )

@@ -1,5 +1,6 @@
 import AppTheme from '@/utils/theme'
-import React from 'react'
+import React, { PropsWithChildren } from 'react'
+import { NavigationProp, ParamListBase, RouteProp } from '@react-navigation/native'
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Ionicons from 'react-native-vector-icons/Ionicons'
@@ -10,7 +11,14 @@ type ConfigType = 'message' | 'collection' | 'setting' | 'upgrade'
 type ConfigItem = TableCellProps & { type: ConfigType }
 
 /** 我的页面 */
-const ProfileView: React.FC<{}> = () => {
+const ProfileView: React.FC<
+    PropsWithChildren & {
+        navigation: NavigationProp<ParamListBase>
+        route: RouteProp<ParamListBase>
+    }
+> = props => {
+    const { navigation, route } = props
+
     const configs: ConfigItem[] = [
         { title: '消息', iconName: 'ios-notifications', layout: 'row', borderTop: true, badge: 999, type: 'message' },
         { title: '收藏', iconName: 'ios-heart-half-outline', type: 'collection' },
@@ -19,6 +27,10 @@ const ProfileView: React.FC<{}> = () => {
     ]
 
     const onHandleCellClick = (item: ConfigItem, index: number): void => {
+        if (item.type == 'upgrade') {
+            navigation.navigate('Upgrade')
+            return
+        }
         console.log('==>', index, item.type)
     }
 
