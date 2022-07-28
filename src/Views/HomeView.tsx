@@ -1,11 +1,11 @@
-import React, { PropsWithChildren, useEffect, useLayoutEffect, useState } from 'react'
-import { Button, Text, View, Image, Dimensions, ScaledSize, TouchableOpacity, ScrollView, RefreshControl, FlatList, SectionList } from 'react-native'
-import { NavigationProp, ParamListBase, RouteProp } from '@react-navigation/native'
+import React, { PropsWithChildren, useEffect, useState } from 'react'
+import { Text, View, Image, Dimensions, ScaledSize, TouchableOpacity, RefreshControl, FlatList } from 'react-native'
+import { ParamListBase } from '@react-navigation/native'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import Carousel from 'react-native-snap-carousel'
 import Api from '@/api'
 import ArticleCell from '@/components/ArticleCell'
 import AppTheme from '@/utils/theme'
-import { HttpResponse } from '@/api/http'
 
 const window = Dimensions.get('window')
 const screen = Dimensions.get('screen')
@@ -28,12 +28,7 @@ const CarouselRenderItem: React.FC<{
 }
 
 /** 首页页面 */
-const HomeView: React.FC<
-    PropsWithChildren & {
-        navigation: NavigationProp<ParamListBase>
-        route: RouteProp<ParamListBase>
-    }
-> = props => {
+const HomeView: React.FC<PropsWithChildren & NativeStackScreenProps<ParamListBase>> = props => {
     const { navigation, route } = props
     /** 轮播数据 */
     const [banners, setBanners] = useState<ApiResp.HomeBannerModel[]>([])
@@ -103,7 +98,7 @@ const HomeView: React.FC<
 
     /** 轮播点击事件 */
     const onHandleCarouselClick = (item: ApiResp.HomeBannerModel, index: number): void => {
-        navigation.navigate('H5', { uri: item.url, title: item.title })
+        navigation.push('H5', { uri: item.url, title: item.title })
     }
 
     return (

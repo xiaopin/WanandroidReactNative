@@ -1,9 +1,9 @@
 import AppTheme from '@/utils/theme'
 import React, { PropsWithChildren } from 'react'
-import { NavigationProp, ParamListBase, RouteProp } from '@react-navigation/native'
-import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { ParamListBase } from '@react-navigation/native'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import Ionicons from 'react-native-vector-icons/Ionicons'
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import TableCell, { TableCellProps } from '@/components/TableCell'
 
@@ -11,12 +11,7 @@ type ConfigType = 'message' | 'collection' | 'setting' | 'upgrade'
 type ConfigItem = TableCellProps & { type: ConfigType }
 
 /** 我的页面 */
-const ProfileView: React.FC<
-    PropsWithChildren & {
-        navigation: NavigationProp<ParamListBase>
-        route: RouteProp<ParamListBase>
-    }
-> = props => {
+const ProfileView: React.FC<PropsWithChildren & NativeStackScreenProps<ParamListBase>> = props => {
     const { navigation, route } = props
 
     const configs: ConfigItem[] = [
